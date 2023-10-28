@@ -19,8 +19,6 @@
 	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin="" />
 	<script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js" integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
 
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-hash/0.2.1/leaflet-hash.min.js" integrity="sha512-0A4MbfuZq5Au9EdpI1S5rUTXlibNBi8CuZ/X3ycwXyZiCjNzpiO9YH6EMqPgzZm6vfNCuZStBQHjnO17nIC0IQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.min.js" integrity="sha512-8BqQ2RH4L4sQhV41ZB24fUc1nGcjmrTA6DILV/aTPYuUzo+wBdYdp0fvQ76Sxgf36p787CXF7TktWlcxu/zyOg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css" integrity="sha512-cUoWMYmv4H9TGP4hbm1mIjYo90WzIQFo/5jj+P5tQcDTf+iVR59RyIj/a9fRsBxzxt5Dnv/Ex7MzRIxcDwaOLw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -28,12 +26,6 @@
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js" integrity="sha512-uKQ39gEGiyUJl4AI6L+ekBdGKpGw4xJ55+xyJG7YFlJokPNYegn9KwQ3P8A7aFQAUtUsAQHep+d/lrGqrbPIDQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.css">
-	<script src="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.js"></script>
-
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-pulse-icon@0.1.0/src/L.Icon.Pulse.min.css">
-	<script src="https://cdn.jsdelivr.net/npm/leaflet-pulse-icon@0.1.0/src/L.Icon.Pulse.min.js"></script>
 
 	<script src="./japan.geojson"></script>
 
@@ -69,37 +61,34 @@
 			/* コントロールボタン */
 			L.control.zoom( { position: 'topright' } ).addTo( map );
 
-			const hash = new L.Hash(map);
-
-			let url_hash = location.hash;
-			if(url_hash === ""){map.setView([35.3138, 136.7960], 13);}
-
 			const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 				maxZoom: 19,
-				attribution: '&copy; <a href="http://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a><br>更新日：2023年10月5日、<a href="https://hitoshi2s.netlify.app/" target="_blank">仁志</a>'
+				attribution: '&copy; <a href="http://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> | <a href="https://cb.bunka.go.jp/ja" target="_blank">文化庁デジタルコンテンツ</a><br>更新日：2023年10月5日、<a href="https://hitoshi2s.netlify.app/" target="_blank">仁志</a>'
 			}).addTo(map);
 
-			let data = L.geoJSON(japan, {onEachFeature: popup_toilet, pointToLayer: toilet_pink});
+			let data = L.geoJSON(japan, {onEachFeature: popup_content, pointToLayer: pink});
 
 			map.addLayer(data);
+
+			map.fitBounds(data.getBounds());
 
 		}
 
 		/* Font Awesome */
-		let toilet_pink =  (feature, latlng) => {
-			let marker = new L.marker(latlng, {icon: L.AwesomeMarkers.icon({icon: 'building', prefix: 'fa', markerColor: 'brown'}) });
+		let pink =  (feature, latlng) => {
+			let marker = new L.marker(latlng, {icon: L.AwesomeMarkers.icon({icon: 'archway', prefix: 'fa', markerColor: 'brown'}) });
 			return marker;
 		}
 
 		/* Popup Display */
-		let popup_toilet = (feature, layer) => {
+		let popup_content = (feature, layer) => {
 			let popup;
 			if (feature.properties && feature.properties.name) {
-				popup = feature.properties.name;
+				popup = "<h3>" + feature.properties.name + "</h3>";
 
-				popup += "<br>" + feature.properties.description;
+				popup += feature.properties.description;
 
-				popup += "<br><br><a href='./data/" + feature.properties.id + ".html'>AR</a>";
+				popup += "<br><a href='./data/" + feature.properties.id + ".html'><h3>ARで見る <i class='fa-solid fa-arrow-up-right-from-square'></i></h3></a>";
 
 
 			}else{};
